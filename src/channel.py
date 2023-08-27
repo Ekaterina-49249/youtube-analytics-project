@@ -1,12 +1,20 @@
+import os
+from googleapiclient.discovery import build
+from src.utils import printj
 
 
 class Channel:
     """Класс для ютуб-канала"""
 
+    api_key = os.getenv('YT_API_KEY')  # ключ из переменной окружение
+    youtube = build('youtube', 'v3', developerKey=api_key)  # объект для работы с API
+
     def __init__(self, channel_id: str) -> None:
         """Экземпляр инициализируется id канала. Дальше все данные будут подтягиваться по API."""
-        pass
+        self.channel_id = channel_id
 
     def print_info(self) -> None:
         """Выводит в консоль информацию о канале."""
-        pass
+
+        channel = Channel.youtube.channels().list(id=self.channel_id, part='snippet,statistics').execute()
+        printj(channel)
