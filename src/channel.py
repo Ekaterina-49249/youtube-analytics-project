@@ -12,7 +12,7 @@ class Channel:
 
     def __init__(self, channel_id: str) -> None:
         """Экземпляр инициализируется id канала. Дальше все данные будут подтягиваться по API."""
-        self.channel_id = channel_id
+        self.__channel_id = channel_id
         self.channel = Channel.youtube.channels().list(id=self.channel_id, part='snippet,statistics').execute()
 
     @classmethod
@@ -20,8 +20,8 @@ class Channel:
         return cls.youtube
 
     @property
-    def id(self):
-        return self.channel_id
+    def channel_id(self):
+        return self.__channel_id
 
     @property
     def title(self):
@@ -54,12 +54,12 @@ class Channel:
                 "title": self.title,
                 "url": self.url,
                 "subscriber_count": self.subscriber_count,
-                "id": self.id,
+                "id": self.__channel_id,
                 "description": self.description,
                 "video_count": self.video_count,
                 "view_count": self.view_count
             }
-            json.dump(argdict, file)
+            json.dump(argdict, file, ensure_ascii=False)
 
     def print_info(self) -> None:
         """Метод выводит в консоль информацию о канале."""
