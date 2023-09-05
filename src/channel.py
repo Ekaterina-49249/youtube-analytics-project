@@ -15,6 +15,33 @@ class Channel:
         self.__channel_id = channel_id
         self.channel = Channel.youtube.channels().list(id=self.channel_id, part='snippet,statistics').execute()
 
+    def __str__(self):
+        return f"{self.title}({self.url})"
+
+    def __add__(self, other):
+        """Сложение подписчиков двух классов"""
+        return self.view_count + other.view_count
+
+    def __sub__(self, other):
+        """Разность подписчиков двух классов"""
+        return self.view_count - other.view_count
+
+    def __lt__(self, other):
+        """Сравнение классов по кол-ву подписчиков"""
+        return self.view_count < other.view_count
+
+    def __gt__(self, other):
+        """Сравнение классов по кол-ву подписчиков"""
+        return self.view_count > other.view_count
+
+    def __ge__(self, other):
+        """Сравнение классов по кол-ву подписчиков"""
+        return self.view_count >= other.view_count
+
+    def __le__(self, other):
+        """Сравнение кассов по кол-ву подписчиков"""
+        return self.view_count <= other.view_count
+
     @classmethod
     def get_service(cls):
         return cls.youtube
@@ -42,7 +69,7 @@ class Channel:
     @property
     def video_count(self):
         return int(self.channel["items"][0]["statistics"]["videoCount"])
-    
+
     @property
     def view_count(self):
         return int(self.channel["items"][0]["statistics"]["viewCount"])
