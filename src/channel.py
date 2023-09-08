@@ -1,19 +1,15 @@
 import json
-import os
-from googleapiclient.discovery import build
+from src.request_youtube import RequestYoutube
 from src.utils import printj
 
 
-class Channel:
+class Channel(RequestYoutube):
     """Класс для ютуб-канала"""
-
-    api_key = os.getenv('YT_API_KEY')  # ключ из переменной окружение
-    youtube = build('youtube', 'v3', developerKey=api_key)  # объект для работы с API
 
     def __init__(self, channel_id: str) -> None:
         """Экземпляр инициализируется id канала. Дальше все данные будут подтягиваться по API."""
         self.__channel_id = channel_id
-        self.channel = Channel.youtube.channels().list(id=self.channel_id, part='snippet,statistics').execute()
+        self.__channel = RequestYoutube.youtube.channels().list(id=self.__channel_id, part='snippet,statistics').execute()
 
     def __str__(self):
         return f"{self.title}({self.url})"
@@ -42,21 +38,17 @@ class Channel:
         """Сравнение кассов по кол-ву подписчиков"""
         return self.view_count <= other.view_count
 
-    @classmethod
-    def get_service(cls):
-        return cls.youtube
-
     @property
     def channel_id(self):
         return self.__channel_id
 
     @property
     def title(self):
-        return self.channel["items"][0]["snippet"]["title"]
+        return self.__channel["items"][0]["snippet"]["title"]
 
     @property
     def description(self):
-        return self.channel["items"][0]["snippet"]["description"]
+        return self.__channel["items"][0]["snippet"]["description"]
 
     @property
     def url(self):
@@ -64,15 +56,15 @@ class Channel:
 
     @property
     def subscriber_count(self):
-        return int(self.channel["items"][0]["statistics"]["subscriberCount"])
+        return int(self.__channel["items"][0]["statistics"]["subscriberCount"])
 
     @property
     def video_count(self):
-        return int(self.channel["items"][0]["statistics"]["videoCount"])
+        return int(self.__channel["items"][0]["statistics"]["videoCount"])
 
     @property
     def view_count(self):
-        return int(self.channel["items"][0]["statistics"]["viewCount"])
+        return int(self.__channel["items"][0]["statistics"]["viewCount"])
 
     def to_json(self, file_name):
         """ Метод, сохраняющий в файл значение атрибутов экземпляра Channel"""
@@ -90,4 +82,4 @@ class Channel:
 
     def print_info(self) -> None:
         """Метод выводит в консоль информацию о канале."""
-        printj(self.channel)
+        printj(self.__channel)
